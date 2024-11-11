@@ -1,0 +1,12 @@
+maze-dijkstra/
+├── README.md
+├── LICENSE
+├── requirements.txt
+├── maze_solver/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── maze.py
+│   ├── algorithms.py
+│   ├── utils.py
+│   └── assets/
+│       └── [images or other assets here]
