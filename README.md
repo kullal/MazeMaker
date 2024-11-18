@@ -124,7 +124,7 @@ Proyek ini dilisensikan di bawah [MIT License](LICENSE).
 Jika Anda memiliki pertanyaan atau saran, silakan hubungi salah satu team kami:
 
 - **Nama**: [Lyon Ambrosio Djuanda, Naufal Tips, Reka Pambs, Yuniar Pratama]
-- **Email**: [lyon.ambrosio.djuanda@gmail.com, rotiisi@gmail.com]
+- **Email**: [lyon.ambrosio.djuanda@gmail.com, rotiisi@gmail.com,riskiyu007@gmail.com]
 
 ## 🙏 Ucapan Terima Kasih
 
