@@ -1,7 +1,7 @@
 class Cell:
     def __init__(self, x, y):
-        self.x = x  # Koordinat X sel
-        self.y = y  # Koordinat Y sel
+        self.x = x
+        self.y = y
         self.walls = {'N': True, 'S': True, 'E': True, 'W': True}
         self.visited = False
         self.distance = float('inf')
