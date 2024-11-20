@@ -1,98 +1,13 @@
-import time
-import random
-import logging
-import heapq
 import matplotlib.pyplot as plt
 from matplotlib import animation
-from src.maze import Maze
+import logging
 
 logging.basicConfig(level=logging.DEBUG)
-
-class Solver(object):
-    """Base class for solution methods.
-    Every new solution method should override the solve method.
-
-    Attributes:
-        maze (list): The maze which is being solved.
-        neighbor_method:
-        quiet_mode: When enabled, information is not outputted to the console
-
-    """
-
-    def __init__(self, maze, quiet_mode, neighbor_method):
-        logging.debug("Class Solver ctor called")
-
-        self.maze = maze
-        self.neighbor_method = neighbor_method
-        self.name = ""
-        self.quiet_mode = quiet_mode
-
-    def solve(self):
-        logging.debug('Class: Solver solve called')
-        raise NotImplementedError
-
-    def get_name(self):
-        logging.debug('Class Solver get_name called')
-        raise self.name
-
-    def get_path(self):
-        logging.debug('Class Solver get_path called')
-        return self.path
-
-
-class DijkstraSolver(Solver):
-    def __init__(self, maze, quiet_mode=False, neighbor_method="fancy"):
-        logging.debug('Class DijkstraSolver ctor called')
-        self.name = "Dijkstra"
-        super().__init__(maze, quiet_mode, neighbor_method)
-
-    def solve(self):
-        logging.debug('Class DijkstraSolver solve called')
-        
-        start = self.maze.entry_coor
-        end = self.maze.exit_coor
-        
-        # Priority queue to store (distance, (k, l))
-        pq = [(0, start)]
-        distances = {start: 0}
-        previous = {start: None}
-        
-        time_start = time.time()
-        
-        while pq:
-            current_distance, current_node = heapq.heappop(pq)
-            
-            if current_node == end:
-                # Backtrack to find the path
-                path = []
-                while current_node is not None:
-                    path.append((current_node, False))
-                    current_node = previous[current_node]
-                path.reverse()
-                
-                if not self.quiet_mode:
-                    print("Number of moves performed: {}".format(len(path)))
-                    print("Execution time for algorithm: {:.4f}".format(time.time() - time_start))
-                return path
-            
-            k_curr, l_curr = current_node
-            self.maze.grid[k_curr][l_curr].visited = True
-
-            neighbour_coors = self.maze.find_neighbours(k_curr, l_curr)
-            neighbour_coors = self.maze.validate_neighbours_solve(
-                neighbour_coors, k_curr, l_curr, end[0], end[1], self.neighbor_method
-            )
-            
-            for neighbor in neighbour_coors:
-                if neighbor not in distances or distances[neighbor] > current_distance + 1:
-                    distances[neighbor] = current_distance + 1
-                    priority = current_distance + 1
-                    heapq.heappush(pq, (priority, neighbor))
-                    previous[neighbor] = current_node
 
 
 class Visualizer(object):
     """Class that handles all aspects of visualization.
+
 
     Attributes:
         maze: The maze that will be visualized
@@ -214,18 +129,183 @@ class Visualizer(object):
         # Handle any saving
         if self.media_filename:
             fig.savefig("{}{}.png".format(self.media_filename, "_solution"), frameon=None)
-#awd
-# Example usage
-if __name__ == "__main__":
-    # Assuming Maze class is properly implemented and can be instantiated
-    maze = Maze()  # Placeholder for actual Maze instantiation
-    solver = DijkstraSolver(maze, quiet_mode=False, neighbor_method="fancy")
-    path = solver.solve()
-    if path:
-        print("Path found:", path)
-        # Visualize the maze and solution
-        visualizer = Visualizer(maze, cell_size=20, media_filename="dijkstra_solution")
-        visualizer.show_maze()
-        visualizer.show_maze_solution()
-    else:
-        print("No path found.")
+
+    def show_generation_animation(self):
+        """Function that animates the process of generating the a maze where path is a list
+        of coordinates indicating the path taken to carve out (break down walls) the maze."""
+
+        # Create the figure and style the axes
+        fig = self.configure_plot()
+
+        # The square that represents the head of the algorithm
+        indicator = plt.Rectangle((self.maze.generation_path[0][0]*self.cell_size, self.maze.generation_path[0][1]*self.cell_size),
+            self.cell_size, self.cell_size, fc = "purple", alpha = 0.6)
+
+        self.ax.add_patch(indicator)
+
+        # Only need to plot right and bottom wall for each cell since walls overlap.
+        # Also adding squares to animate the path taken to carve out the maze.
+        color_walls = "k"
+        for i in range(self.maze.num_rows):
+            for j in range(self.maze.num_cols):
+                self.lines["{},{}: right".format(i, j)] = self.ax.plot([(j+1)*self.cell_size, (j+1)*self.cell_size],
+                        [i*self.cell_size, (i+1)*self.cell_size],
+                    linewidth = 2, color = color_walls)[0]
+                self.lines["{},{}: bottom".format(i, j)] = self.ax.plot([(j+1)*self.cell_size, j*self.cell_size],
+                        [(i+1)*self.cell_size, (i+1)*self.cell_size],
+                    linewidth = 2, color = color_walls)[0]
+
+                self.squares["{},{}".format(i, j)] = plt.Rectangle((j*self.cell_size,
+                    i*self.cell_size), self.cell_size, self.cell_size, fc = "red", alpha = 0.4)
+                self.ax.add_patch(self.squares["{},{}".format(i, j)])
+
+        # Plotting boundaries of maze.
+        color_boundary = "k"
+        self.ax.plot([0, self.width], [self.height,self.height], linewidth = 2, color = color_boundary)
+        self.ax.plot([self.width, self.width], [self.height, 0], linewidth = 2, color = color_boundary)
+        self.ax.plot([self.width, 0], [0, 0], linewidth = 2, color = color_boundary)
+        self.ax.plot([0, 0], [0, self.height], linewidth = 2, color = color_boundary)
+
+        def animate(frame):
+            """Function to supervise animation of all objects."""
+            animate_walls(frame)
+            animate_squares(frame)
+            animate_indicator(frame)
+            self.ax.set_title("Step: {}".format(frame + 1), fontname="serif", fontsize=19)
+            return []
+
+        def animate_walls(frame):
+            """Function that animates the visibility of the walls between cells."""
+            if frame > 0:
+                self.maze.grid[self.maze.generation_path[frame-1][0]][self.maze.generation_path[frame-1][1]].remove_walls(
+                    self.maze.generation_path[frame][0],
+                    self.maze.generation_path[frame][1])   # Wall between curr and neigh
+
+                self.maze.grid[self.maze.generation_path[frame][0]][self.maze.generation_path[frame][1]].remove_walls(
+                    self.maze.generation_path[frame-1][0],
+                    self.maze.generation_path[frame-1][1])   # Wall between neigh and curr
+
+                current_cell = self.maze.grid[self.maze.generation_path[frame-1][0]][self.maze.generation_path[frame-1][1]]
+                next_cell = self.maze.grid[self.maze.generation_path[frame][0]][self.maze.generation_path[frame][1]]
+
+                """Function to animate walls between cells as the search goes on."""
+                for wall_key in ["right", "bottom"]:    # Only need to draw two of the four walls (overlap)
+                    if current_cell.walls[wall_key] is False:
+                        self.lines["{},{}: {}".format(current_cell.row,
+                            current_cell.col, wall_key)].set_visible(False)
+                    if next_cell.walls[wall_key] is False:
+                        self.lines["{},{}: {}".format(next_cell.row,
+                                                 next_cell.col, wall_key)].set_visible(False)
+
+        def animate_squares(frame):
+            """Function to animate the searched path of the algorithm."""
+            self.squares["{},{}".format(self.maze.generation_path[frame][0],
+                                   self.maze.generation_path[frame][1])].set_visible(False)
+            return []
+
+        def animate_indicator(frame):
+            """Function to animate where the current search is happening."""
+            indicator.set_xy((self.maze.generation_path[frame][1]*self.cell_size,
+                              self.maze.generation_path[frame][0]*self.cell_size))
+            return []
+
+        logging.debug("Creating generation animation")
+        anim = animation.FuncAnimation(fig, animate, frames=self.maze.generation_path.__len__(),
+                                       interval=100, blit=True, repeat=False)
+
+        logging.debug("Finished creating the generation animation")
+
+        # Display the plot to the user
+        plt.show()
+
+        # Handle any saving
+        if self.media_filename:
+            print("Saving generation animation. This may take a minute....")
+            mpeg_writer = animation.FFMpegWriter(fps=24, bitrate=1000,
+                                                 codec="libx264", extra_args=["-pix_fmt", "yuv420p"])
+            anim.save("{}{}{}x{}.mp4".format(self.media_filename, "_generation_", self.maze.num_rows,
+                                           self.maze.num_cols), writer=mpeg_writer)
+
+    def add_path(self):
+        # Adding squares to animate the path taken to solve the maze. Also adding entry/exit text
+        color_walls = "k"
+        for i in range(self.maze.num_rows):
+            for j in range(self.maze.num_cols):
+                if self.maze.initial_grid[i][j].is_entry_exit == "entry":
+                    self.ax.text(j*self.cell_size, i*self.cell_size, "START", fontsize = 7, weight = "bold")
+                elif self.maze.initial_grid[i][j].is_entry_exit == "exit":
+                    self.ax.text(j*self.cell_size, i*self.cell_size, "END", fontsize = 7, weight = "bold")
+
+                if self.maze.initial_grid[i][j].walls["top"]:
+                    self.lines["{},{}: top".format(i, j)] = self.ax.plot([j*self.cell_size, (j+1)*self.cell_size],
+                         [i*self.cell_size, i*self.cell_size], linewidth = 2, color = color_walls)[0]
+                if self.maze.initial_grid[i][j].walls["right"]:
+                    self.lines["{},{}: right".format(i, j)] = self.ax.plot([(j+1)*self.cell_size, (j+1)*self.cell_size],
+                         [i*self.cell_size, (i+1)*self.cell_size], linewidth = 2, color = color_walls)[0]
+                if self.maze.initial_grid[i][j].walls["bottom"]:
+                    self.lines["{},{}: bottom".format(i, j)] = self.ax.plot([(j+1)*self.cell_size, j*self.cell_size],
+                         [(i+1)*self.cell_size, (i+1)*self.cell_size], linewidth = 2, color = color_walls)[0]
+                if self.maze.initial_grid[i][j].walls["left"]:
+                    self.lines["{},{}: left".format(i, j)] = self.ax.plot([j*self.cell_size, j*self.cell_size],
+                             [(i+1)*self.cell_size, i*self.cell_size], linewidth = 2, color = color_walls)[0]
+                self.squares["{},{}".format(i, j)] = plt.Rectangle((j*self.cell_size,
+                                                                    i*self.cell_size), self.cell_size, self.cell_size,
+                                                                   fc = "red", alpha = 0.4, visible = False)
+                self.ax.add_patch(self.squares["{},{}".format(i, j)])
+
+    def animate_maze_solution(self):
+        """Function that animates the process of generating the a maze where path is a list
+        of coordinates indicating the path taken to carve out (break down walls) the maze."""
+
+        # Create the figure and style the axes
+        fig = self.configure_plot()
+
+        # Adding indicator to see shere current search is happening.
+        indicator = plt.Rectangle((self.maze.solution_path[0][0][0]*self.cell_size,
+                                   self.maze.solution_path[0][0][1]*self.cell_size), self.cell_size, self.cell_size,
+                                  fc="purple", alpha=0.6)
+        self.ax.add_patch(indicator)
+
+        self.add_path()
+
+        def animate_squares(frame):
+            """Function to animate the solved path of the algorithm."""
+            if frame > 0:
+                if self.maze.solution_path[frame - 1][1]:  # Color backtracking
+                    self.squares["{},{}".format(self.maze.solution_path[frame - 1][0][0],
+                                           self.maze.solution_path[frame - 1][0][1])].set_facecolor("orange")
+
+                self.squares["{},{}".format(self.maze.solution_path[frame - 1][0][0],
+                                       self.maze.solution_path[frame - 1][0][1])].set_visible(True)
+                self.squares["{},{}".format(self.maze.solution_path[frame][0][0],
+                                       self.maze.solution_path[frame][0][1])].set_visible(False)
+            return []
+
+        def animate_indicator(frame):
+            """Function to animate where the current search is happening."""
+            indicator.set_xy((self.maze.solution_path[frame][0][1] * self.cell_size,
+                              self.maze.solution_path[frame][0][0] * self.cell_size))
+            return []
+
+        def animate(frame):
+            """Function to supervise animation of all objects."""
+            animate_squares(frame)
+            animate_indicator(frame)
+            self.ax.set_title("Step: {}".format(frame + 1), fontname = "serif", fontsize = 19)
+            return []
+
+        logging.debug("Creating solution animation")
+        anim = animation.FuncAnimation(fig, animate, frames=self.maze.solution_path.__len__(),
+                                       interval=100, blit=True, repeat=False)
+        logging.debug("Finished creating solution animation")
+
+        # Display the animation to the user
+        plt.show()
+
+        # Handle any saving
+        if self.media_filename:
+            print("Saving solution animation. This may take a minute....")
+            mpeg_writer = animation.FFMpegWriter(fps=24, bitrate=1000,
+                                                 codec="libx264", extra_args=["-pix_fmt", "yuv420p"])
+            anim.save("{}{}{}x{}.mp4".format(self.media_filename, "_solution_", self.maze.num_rows,
+                                           self.maze.num_cols), writer=mpeg_writer)
