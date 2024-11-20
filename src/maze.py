@@ -1,7 +1,7 @@
 import random
 import math
 import time
-import heapq
+import heapq 
 from src.cell import Cell
 from src.algorithm import depth_first_recursive_backtracker, binary_tree
 
