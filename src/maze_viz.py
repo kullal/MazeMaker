@@ -214,7 +214,7 @@ class Visualizer(object):
         # Handle any saving
         if self.media_filename:
             fig.savefig("{}{}.png".format(self.media_filename, "_solution"), frameon=None)
-
+#awd
 # Example usage
 if __name__ == "__main__":
     # Assuming Maze class is properly implemented and can be instantiated
