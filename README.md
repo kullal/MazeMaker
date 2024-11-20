@@ -1,133 +1,113 @@
 
-# Maze Solver dengan Algoritma Dijkstra
+# MazeMaker
 
-Selamat datang di proyek **Maze Solver dengan Algoritma Dijkstra**! 🎉
+MazeMaker adalah aplikasi interaktif untuk membuat dan menyelesaikan labirin menggunakan Algoritma Dijkstra. Dengan antarmuka grafis yang ramah pengguna, Anda dapat menyaksikan algoritma bekerja secara visual untuk menemukan jalur terpendek dari titik awal ke tujuan.
 
-Proyek ini adalah implementasi interaktif dari labirin (maze) yang dapat diselesaikan menggunakan **Algoritma Dijkstra**. Dengan antarmuka yang menarik dan interaktif, Anda dapat melihat bagaimana algoritma menemukan jalur terpendek dari titik awal ke titik tujuan dalam sebuah labirin yang kompleks.
+## Daftar Isi
 
-## 📖 Daftar Isi
+1. [Fitur](#fitur)
+2. [Prasyarat](#prasyarat)
+3. [Instalasi](#instalasi)
+4. [Quickstart](#quickstart)
+5. [Cara Menjalankan Program](#cara-menjalankan-program)
+6. [Catatan](#catatan)
+7. [Kontribusi](#kontribusi)
+8. [Lisensi](#lisensi)
+9. [Kontak](#kontak)
 
-- [Fitur](#-fitur)
-- [Prasyarat](#-prasyarat)
-- [Instalasi](#-instalasi)
-- [Cara Menggunakan](#-cara-menggunakan)
-- [Contoh Tampilan](#-contoh-tampilan)
-- [Teknologi yang Digunakan](#-teknologi-yang-digunakan)
-- [Kontribusi](#-kontribusi)
-- [Lisensi](#-lisensi)
-- [Kontak](#-kontak)
-- [Ucapan Terima Kasih](#-ucapan-terima-kasih)
+## Fitur
 
-## ✨ Fitur
+- **Pembuatan Labirin Acak**: Setiap kali program dijalankan, labirin baru dihasilkan.
+- **Visualisasi Algoritma Dijkstra**: Lihat langkah-langkah pencarian jalur terpendek.
+- **Antarmuka Grafis Interaktif**: Menggunakan Pygame untuk pengalaman pengguna yang mulus.
+- **Pengaturan Ukuran Labirin**: Sesuaikan dimensi labirin sesuai preferensi.
+- **Reset dan Pengaturan Ulang**: Buat labirin baru dengan mudah.
 
-- **Pembuatan Labirin Acak**: Labirin dibuat secara acak setiap kali Anda menjalankan program.
-- **Visualisasi Algoritma Dijkstra**: Lihat langkah demi langkah bagaimana algoritma menemukan jalur terpendek.
-- **Antarmuka Pengguna Interaktif**: Antarmuka yang ramah pengguna menggunakan Pygame.
-- **Pengaturan Ukuran Labirin**: Sesuaikan ukuran labirin sesuai keinginan Anda.
-- **Reset dan Pengaturan Ulang**: Buat labirin baru atau ulangi proses penyelesaian dengan mudah.
-
-## 📋 Prasyarat
+## Prasyarat
 
 Sebelum menjalankan program ini, pastikan Anda telah menginstal:
 
-- Python 3.x
-- Pustaka **Pygame**
+- **Python 3.x**
+- **Pygame**
+- **Matplotlib**
 
-## 🚀 Instalasi
+## Instalasi
 
-1. **Kloning Repository**
-
-   ```bash
-   git clone https://github.com/username/maze-dijkstra.git
-   ```
-
-2. **Masuk ke Direktori Proyek**
+1. **Clone Repository**: 
 
    ```bash
-   cd maze-dijkstra
+   git clone https://github.com/kullal/MazeMaker.git
    ```
 
-3. **Instal Pustaka yang Diperlukan**
+2. **Masuk ke Direktori Proyek**:
 
    ```bash
-   pip install pygame
+   cd MazeMaker
    ```
 
-## 🕹️ Cara Menggunakan
-
-1. **Jalankan Program**
+3. **(Opsional) Buat Virtual Environment**:
 
    ```bash
-   python maze_dijkstra.py
+   python -m venv venv
+   source venv/bin/activate  # Untuk Windows: venv\Scripts\activate
    ```
 
-2. **Antarmuka Utama**
-
-   - **Start**: Mulai membuat labirin dan visualisasi.
-   - **Settings**: Ubah ukuran labirin atau kecepatan animasi.
-   - **Quit**: Keluar dari program.
-
-3. **Navigasi dalam Program**
-
-   - Klik tombol **"Start"** untuk memulai.
-   - Labirin akan dibuat secara acak.
-   - Algoritma Dijkstra akan mulai mencari jalur terpendek.
-   - Anda dapat melihat visualisasi prosesnya secara real-time.
-
-4. **Mengatur Ulang**
-
-   - Gunakan tombol **"Reset"** untuk membuat labirin baru.
-   - Atur preferensi Anda di menu **"Settings"**.
-
-## 🎨 Contoh Tampilan
-
-![Maze Solver Screenshot](screenshot.png)
-
-*Catatan: Gambar di atas adalah contoh tampilan program saat algoritma Dijkstra sedang berjalan.*
-
-## 🛠️ Teknologi yang Digunakan
-
-- **Python 3.x**: Bahasa pemrograman utama.
-- **Pygame**: Untuk membuat antarmuka grafis dan visualisasi.
-
-## 🤝 Kontribusi
-
-Kami menyambut kontribusi dari siapa saja! Jika Anda ingin meningkatkan proyek ini:
-
-1. **Fork Repository Ini**
-2. **Buat Branch Fitur Baru**
+4. **Instal Dependensi**:
 
    ```bash
-   git checkout -b fitur-baru
+   pip install -r requirements.txt
    ```
 
-3. **Commit Perubahan Anda**
+   Jika file `requirements.txt` tidak tersedia:
 
    ```bash
-   git commit -m 'Menambahkan fitur baru'
+   pip install pygame matplotlib
    ```
 
-4. **Push ke Branch**
+## Quickstart
+
+Untuk memulai program dengan cepat, ikuti langkah-langkah berikut:
+
+1. **Clone Repository**:
 
    ```bash
-   git push origin fitur-baru
+   git clone https://github.com/kullal/MazeMaker.git
+   cd MazeMaker
    ```
 
-5. **Buat Pull Request**
+2. **Instal Dependensi**:
 
-## 📄 Lisensi
+   ```bash
+   pip install pygame matplotlib
+   ```
 
-Proyek ini dilisensikan di bawah [MIT License](LICENSE).
+3. **Jalankan Program**:
 
-## 📫 Kontak
+   ```bash
+   python main.py
+   ```
 
-Jika Anda memiliki pertanyaan atau saran, silakan hubungi salah satu team kami:
+Dengan langkah-langkah ini, program akan berjalan dan menampilkan antarmuka grafis labirin. Anda dapat langsung melihat bagaimana algoritma bekerja.
 
-- **Nama**: [Lyon Ambrosio Djuanda, Naufal Tips, Reka Pambs, Yuniar Pratama]
-- **Email**: [lyon.ambrosio.djuanda@gmail.com, rotiisi@gmail.com,riskiyu007@gmail.com]
+## Cara Menjalankan Program
 
-## 🙏 Ucapan Terima Kasih
+Setelah instalasi selesai, jalankan program dengan:
 
-Terima kasih kepada semua kontributor dan komunitas open-source yang telah membantu dalam pengembangan proyek ini. Juga, terima kasih kepada Anda yang telah mencoba program ini!
+```bash
+python   quickstart.py
+```
 
-Selamat menikmati dan semoga bermanfaat! 🎉
+Labirin acak akan ditampilkan di antarmuka grafis, dan algoritma Dijkstra akan mulai mencari jalur terpendek.
+
+## Catatan
+
+- **Pengaturan Ukuran Labirin**: Dimensi labirin dapat disesuaikan dengan mengubah parameter dalam kode sumber.
+- **Reset Labirin**: Untuk memulai ulang dengan labirin baru, tutup program dan jalankan kembali.
+
+## Kontribusi
+
+Kami menerima kontribusi dari komunitas! Fork repository ini, buat branch baru, dan kirimkan pull request untuk ditinjau.
+
+## Anggota
+
+Jika ada pertanyaan atau masukan, hubungi Lyon Ambrosio Djuanda,Naufal Tipasya Deyana,Gangsar Reka Pambudi,Riski Yuniar Pratama .
