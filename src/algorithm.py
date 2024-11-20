@@ -11,18 +11,17 @@ def dijkstra(start_cell, end_cell, grid, cols, rows):
         current_cell.visited = True
 
         if current_cell == end_cell:
-            break  # Jalur terpendek telah ditemukan
+            break
 
         for neighbor in current_cell.get_neighbors(grid, cols, rows):
             if neighbor.visited:
                 continue
-            tentative_distance = current_distance + 1  # Asumsi semua edge memiliki bobot 1
+            tentative_distance = current_distance + 1
             if tentative_distance < neighbor.distance:
                 neighbor.distance = tentative_distance
                 neighbor.previous = current_cell
                 heapq.heappush(unvisited_queue, (neighbor.distance, neighbor))
 
-    # Membangun jalur terpendek dari end_cell ke start_cell
     path = []
     current = end_cell
     while current.previous:
