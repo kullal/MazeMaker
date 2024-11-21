@@ -1,7 +1,7 @@
 import time
 import random
 import logging
-from src.maze import Maze
+from testing.maze import Maze
 
 logging.basicConfig(level=logging.DEBUG)
 
