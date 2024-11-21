@@ -8,10 +8,10 @@ if __name__ == "__main__":
     manager = MazeManager()
 
     # Add a 10x10 maze to the manager
-    maze = manager.add_maze(50, 50)
+    maze = manager.add_maze(10, 50)
 
     # Solve the maze using the Breadth First algorithm
-    manager.solve_maze(maze.id, "DepthFirstBacktracker")
+    manager.solve_maze(maze.id, "Dijkstra")
 
     # Display the maze
     manager.show_maze(maze.id)
