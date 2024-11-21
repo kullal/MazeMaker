@@ -3,7 +3,8 @@ from testing.maze_viz import Visualizer
 from testing.solver import DepthFirstBacktracker
 from testing.solver import BiDirectional
 from testing.solver import BreadthFirst
-from testing.solver import Dijkstra 
+from testing.solver import Dijkstra
+from testing.solver import AStar
 
 class MazeManager(object):
     """A manager that abstracts the interaction with the library's components. The graphs, animations, maze creation,
@@ -128,6 +129,9 @@ class MazeManager(object):
             maze.solution_path = solver.solve()
         elif method == "Dijkstra":
             solver = Dijkstra(maze, neighbor_method, self.quiet_mode)
+            maze.solution_path = solver.solve()
+        elif method == "AStar":
+            solver = AStar(maze, neighbor_method, self.quiet_mode)
             maze.solution_path = solver.solve()
 
     def show_maze(self, id, cell_size=1):

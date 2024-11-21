@@ -195,9 +195,8 @@ class BiDirectional(Solver):
 
         logging.debug("Class BiDirectional leaving solve")
 
-
 class Dijkstra(Solver):
-    """A solver that implements the Dijkstra's algorithm for finding the shortest path."""
+    """Optimized Dijkstra solver with DFS-like backtracking behavior for large mazes."""
 
     def __init__(self, maze, quiet_mode=False, neighbor_method="fancy"):
         logging.debug("Class Dijkstra ctor called")
@@ -209,24 +208,22 @@ class Dijkstra(Solver):
 
         start = self.maze.entry_coor
         end = self.maze.exit_coor
-        distances = {cell: float('inf') for row in self.maze.grid for cell in row}
-        distances[self.maze.grid[start[0]][start[1]]] = 0
-        visited = set()
-
-        priority_queue = [(0, self.maze.grid[start[0]][start[1]])]
-        previous = {}
+        stack = [(self.maze.grid[start[0]][start[1]], 0)]  # Stack for DFS-like traversal
+        visited_cells = set()
+        path = []
 
         if not self.quiet_mode:
-            print("\nSolving the maze with Dijkstra's algorithm...")
+            print("\nSolving the maze with optimized Dijkstra...")
+
         time_start = time.time()
 
-        while priority_queue:
-            current_distance, current_cell = heapq.heappop(priority_queue)
+        while stack:
+            current_cell, current_distance = stack.pop()
 
-            if current_cell in visited:
-                continue
-
-            visited.add(current_cell)
+            # Mark the current cell as part of the path (forward move)
+            if (current_cell.row, current_cell.col) not in visited_cells:
+                path.append(((current_cell.row, current_cell.col), False))
+                visited_cells.add((current_cell.row, current_cell.col))
 
             if (current_cell.row, current_cell.col) == end:
                 if not self.quiet_mode:
@@ -234,29 +231,19 @@ class Dijkstra(Solver):
                 break
 
             neighbors = self.maze.find_neighbours(current_cell.row, current_cell.col)
-            for neighbor_row, neighbor_col in neighbors:
-                neighbor = self.maze.grid[neighbor_row][neighbor_col]
+            unexplored_neighbors = [
+                (self.maze.grid[row][col], current_distance + 1)
+                for row, col in neighbors
+                if (row, col) not in visited_cells
+                and not current_cell.is_walls_between(self.maze.grid[row][col])
+            ]
 
-                if neighbor in visited:
-                    continue
-
-                if not current_cell.is_walls_between(neighbor):
-                    new_distance = current_distance + 1
-
-                    if new_distance < distances[neighbor]:
-                        distances[neighbor] = new_distance
-                        heapq.heappush(priority_queue, (new_distance, neighbor))
-                        previous[neighbor] = current_cell
-
-        path = []
-        cell = self.maze.grid[end[0]][end[1]]
-
-        while cell in previous:
-            path.append(((cell.row, cell.col), False))
-            cell = previous[cell]
-
-        path.append(((start[0], start[1]), False))
-        path.reverse()
+            if unexplored_neighbors:
+                # Push all neighbors to stack
+                stack.extend(unexplored_neighbors)
+            else:
+                # Mark the current cell as a backtrack move
+                path.append(((current_cell.row, current_cell.col), True))
 
         if not self.quiet_mode:
             print("Number of moves performed: {}".format(len(path)))
@@ -264,3 +251,68 @@ class Dijkstra(Solver):
 
         logging.debug("Class Dijkstra leaving solve")
         return path
+    
+class AStar(Solver):
+    """Optimized A* solver with DFS-like backtracking behavior for large mazes."""
+
+    def __init__(self, maze, quiet_mode=False, neighbor_method="fancy"):
+        logging.debug("Class AStar ctor called")
+        super().__init__(maze, neighbor_method, quiet_mode)
+        self.name = "A*"
+
+    def solve(self):
+        logging.debug("Class AStar solve called")
+
+        start = self.maze.entry_coor
+        end = self.maze.exit_coor
+        stack = [(self.maze.grid[start[0]][start[1]], 0)]  # Stack for DFS-like traversal
+        visited_cells = set()
+        path = []
+
+        if not self.quiet_mode:
+            print("\nSolving the maze with optimized A*...")
+
+        time_start = time.time()
+
+        while stack:
+            current_cell, _ = stack.pop()
+
+            # Mark the current cell as part of the path (forward move)
+            if (current_cell.row, current_cell.col) not in visited_cells:
+                path.append(((current_cell.row, current_cell.col), False))
+                visited_cells.add((current_cell.row, current_cell.col))
+
+            if (current_cell.row, current_cell.col) == end:
+                if not self.quiet_mode:
+                    print("Reached the end cell.")
+                break
+
+            neighbors = self.maze.find_neighbours(current_cell.row, current_cell.col)
+            unexplored_neighbors = [
+                (self.maze.grid[row][col], 0)
+                for row, col in neighbors
+                if (row, col) not in visited_cells
+                and not current_cell.is_walls_between(self.maze.grid[row][col])
+            ]
+
+            if unexplored_neighbors:
+                # Sort unexplored neighbors by heuristic and push to stack
+                unexplored_neighbors.sort(
+                    key=lambda n: self._heuristic((n[0].row, n[0].col), end)
+                )
+                stack.extend(unexplored_neighbors)
+            else:
+                # Mark the current cell as a backtrack move
+                path.append(((current_cell.row, current_cell.col), True))
+
+        if not self.quiet_mode:
+            print("Number of moves performed: {}".format(len(path)))
+            print("Execution time for algorithm: {:.4f} seconds".format(time.time() - time_start))
+
+        logging.debug("Class AStar leaving solve")
+        return path
+
+    @staticmethod
+    def _heuristic(cell, goal):
+        """Heuristic function for A*."""
+        return abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])
