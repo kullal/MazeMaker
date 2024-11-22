@@ -20,6 +20,61 @@ class Visualizer(object):
         media_filename (string): The name of the animations and images
 
     """
+    def compare_execution_time(results, algorithms):
+        """
+        Membuat grafik perbandingan waktu eksekusi untuk setiap algoritma.
+
+        Args:
+            results (dict): Dictionary dengan hasil waktu eksekusi untuk setiap algoritma.
+            algorithms (list): List algoritma yang dibandingkan.
+        """
+        fig, ax = plt.subplots(figsize=(8, 4))
+        times = [results[algo]["time"] for algo in algorithms]
+
+        # Warna unik untuk setiap algoritma
+        colors = ["blue", "green", "red", "purple", "orange"]
+
+        # Plot waktu eksekusi
+        ax.bar(algorithms, times, color=colors[:len(algorithms)], alpha=0.7)
+        ax.set_xlabel("Algoritma")
+        ax.set_ylabel("Waktu Eksekusi (detik)")
+        ax.set_title("Perbandingan Waktu Eksekusi Algoritma Solver")
+
+        # Tambahkan keterangan di atas bar
+        for i, time_val in enumerate(times):
+            ax.text(i, time_val + 0.01, f"{time_val:.4f}s", ha="center", va="bottom", fontsize=10, color="black")
+
+        plt.tight_layout()
+        plt.show()
+
+    @staticmethod
+    def compare_solution_steps(results, algorithms):
+        """
+        Membuat grafik perbandingan jumlah langkah solusi untuk setiap algoritma.
+
+        Args:
+            results (dict): Dictionary dengan hasil jumlah langkah solusi untuk setiap algoritma.
+            algorithms (list): List algoritma yang dibandingkan.
+        """
+        fig, ax = plt.subplots(figsize=(8, 4))
+        steps = [results[algo]["steps"] for algo in algorithms]
+
+        # Warna unik untuk setiap algoritma
+        colors = ["blue", "green", "red", "purple", "orange"]
+
+        # Plot jumlah langkah solusi
+        ax.bar(algorithms, steps, color=colors[:len(algorithms)], alpha=0.7)
+        ax.set_xlabel("Algoritma")
+        ax.set_ylabel("Langkah Solusi")
+        ax.set_title("Perbandingan Langkah Solusi Algoritma Solver")
+
+        # Tambahkan keterangan di atas bar
+        for i, step_val in enumerate(steps):
+            ax.text(i, step_val + 1, f"{step_val} langkah", ha="center", va="bottom", fontsize=10, color="black")
+
+        plt.tight_layout()
+        plt.show()
+        
     def __init__(self, maze, cell_size, media_filename):
         self.maze = maze
         self.cell_size = cell_size
@@ -309,3 +364,4 @@ class Visualizer(object):
                                                  codec="libx264", extra_args=["-pix_fmt", "yuv420p"])
             anim.save("{}{}{}x{}.mp4".format(self.media_filename, "_solution_", self.maze.num_rows,
                                            self.maze.num_cols), writer=mpeg_writer)
+            
