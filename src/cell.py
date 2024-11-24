@@ -11,6 +11,7 @@ class Cell(object):
             walls (list):
             neighbours (list):
     """
+    
     def __init__(self, row, col):
         self.row = row
         self.col = col
@@ -19,6 +20,9 @@ class Cell(object):
         self.is_entry_exit = None
         self.walls = {"top": True, "right": True, "bottom": True, "left": True}
         self.neighbours = list()
+
+    def __lt__(self, other):
+        return (self.row, self.col) < (other.row, other.col)
 
     def is_walls_between(self, neighbour):
         """Function that checks if there are walls between self and a neighbour cell.
