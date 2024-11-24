@@ -1,10 +1,10 @@
-from main.maze import Maze
-from main.maze_viz import Visualizer
-from main.solver import DepthFirstBacktracker
-from main.solver import BiDirectional
-from main.solver import BreadthFirst
-from main.solver import Dijkstra
-from main.solver import AStar
+from src.maze import Maze
+from src.maze_viz import Visualizer
+from src.solver import DepthFirstBacktracker
+from src.solver import BiDirectional
+from src.solver import BreadthFirst
+from src.solver import Dijkstra
+from src.solver import AStar
 
 class MazeManager(object):
     """A manager that abstracts the interaction with the library's components. The graphs, animations, maze creation,

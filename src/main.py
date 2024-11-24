@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from maze_manager import MazeManager
 
-from main.maze_viz import Visualizer  # Import Visualizer untuk visualisasi perbandingan
+from src.maze_viz import Visualizer  # Import Visualizer untuk visualisasi perbandingan
 import time
 
 if __name__ == "__main__":

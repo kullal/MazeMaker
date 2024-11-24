@@ -1,7 +1,7 @@
 import time
 import random
 import logging
-from main.maze import Maze
+from src.maze import Maze
 import heapq  # Untuk algoritma Dijkstra
 
 logging.basicConfig(level=logging.DEBUG)
