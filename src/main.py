@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from maze_manager import MazeManager
+from src.maze_manager import MazeManager
 
 from src.maze_viz import Visualizer  # Import Visualizer untuk visualisasi perbandingan
 import time
